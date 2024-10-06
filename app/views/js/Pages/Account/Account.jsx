@@ -1,7 +1,10 @@
 import Layout from '@layout/Layout.jsx';
-import { Pagination, InputSimple, ButtonSimple, SkeletonLoading } from '@components/index.jsx';
-import React, { useState, useEffect, Suspense } from 'react';
+import { Pagination, InputSimple, ButtonSimple, SkeletonLoading, SimpleErrorText} from '@components/index.jsx';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
+import axios from 'axios';
+
+const ModalSimple = lazy(() => import('@components/ModalSimple.jsx'));
 
 const Tableheader = ({ checkAll, isOnChange }) => {
   return (
@@ -54,22 +57,23 @@ const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) =
   );
 };
 
+
 const Account = () => {
-  const { data, searchQuery } = usePage().props;
-  const totalPage = data.pagination.last_page;
-  const currentPage = data.pagination.current_page;
-  const perPage = data.pagination.per_page;
+  const { posts, searchQuery } = usePage().props;
+  const totalPage = posts.pagination.last_page;
+  const currentPage = posts.pagination.current_page;
+  const perPage = posts.pagination.per_page;
   const range = 2;
 
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    setList(data.data);
-  }, [data.data]);
+    setList(posts.posts);
+  }, [posts.posts]);
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
-  const [search, setSearch] = useState(data.searchQuery || '');
+  const [search, setSearch] = useState(posts.searchQuery || '');
 
   const handleCheckAll = (e) => {
     setIsCheckAll(!isCheckAll);
@@ -100,21 +104,199 @@ const Account = () => {
     router.get('/account', { search });
   };
 
+  const refreshPage = () => {
+    router.get('/account');
+  }
+
+  const [activeModal, setActiveModal] = useState(null);
+  const openModal = (modalName) => setActiveModal(modalName);
+  const closeModal = () => setActiveModal(null);
+
+  const [values, setValues] = useState({});
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
+
+  const handleInput = (e) => {
+    const key = e.target.name;
+    const value = e.target.value;
+    setValues(values => ({
+      ...values,
+      [key]: value
+    }))
+  }
+
+  const resetForm = () => {
+    setValues({})
+    setErrors({})
+  }
+
+  const saveData = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/account',  values );
+      if(response.status === 200){
+        alert(response.data.message);
+        resetForm();
+        closeModal();
+        refreshPage();
+      }else{
+        alert(response.data.message);
+        resetForm();
+        closeModal();
+        refreshPage();
+      }
+    }catch(error){
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        setMessage('Terjadi kesalahan pada server.');
+      }
+    }
+  }
+
+  const updateData = async (e) => {
+    e.preventDefault();
+    try {
+      let id = parseInt(isCheck[0]);
+      const response = await axios.put(`/account/${id}`,  values );
+      if(response.status === 200){
+        alert(response.data.message);
+        resetForm();
+        closeModal();
+        refreshPage();
+      }else{
+        alert(response.data.message);
+        resetForm();
+        closeModal();
+        refreshPage();
+      }
+    }catch(error){
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        setMessage('Terjadi kesalahan pada server.');
+      }
+    }
+  }
+
+  const getDataEdit = async (e) => {
+    try{
+      let id = parseInt(isCheck[0]);
+      const res = await axios.get(`/account/${id}`);
+      setValues(res.data.data);
+    }catch(error){
+      if (error.response && error.response.status === 400) {
+        setErrors(error.response.data.errors);
+      } else {
+        setMessage('Terjadi kesalahan pada server.');
+      }
+    }
+  }
+
+  const deleteData = async (e) => {
+    try{
+      let ids = {ids : isCheck};
+      const res = await axios.delete('/account/', {params: ids});
+      if(res.status === 200){
+        alert(res.data.message);
+        refreshPage();
+      }else{
+        alert(res.data.message);
+        refreshPage();
+      }
+    }catch(error){
+      if (error.res && error.res.status === 400) {
+        setErrors(error.res.data.errors);
+      } else {
+        setMessage('Terjadi kesalahan pada server.');
+      }
+    }
+  }
+
+  const handleAccept = (e) => {
+    if(values.id){
+      updateData(e);
+    }else{
+      saveData(e);
+    }
+  };
+
+  const handleDecline = () => {
+    closeModal();
+    resetForm();
+  };
+
+  const handleClickEdit = (e) => {
+    openModal('edit');
+    getDataEdit();
+  }
+
+  const handleDelete = (e) => {
+    if(confirm("Yakin hapus data ?") === true){
+      deleteData();
+    }else{
+      return false;
+    }
+  }
+
   return (
     <>
       <Head title="Account" />
       <div className="m-2 border boder-gray-200 rounded p-4">
-        {/*form cari*/}
-        <form onSubmit={handleSearch}>
-          <div className="flex items-center gap-x-2">
-            <InputSimple
-              placeholder="cari user"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <ButtonSimple type="submit" text="Cari" />
+        
+        <Suspense fallback={<div>Loading...</div>}>
+        {activeModal && (
+          <ModalSimple
+            isOpen={!!activeModal}
+            onClose={closeModal}
+            title={activeModal === 'edit' ? "Edit Form User" : "Form User"}
+            acceptLabel="Save"
+            declineLabel="Cancel"
+            onAccept={handleAccept}
+            onDecline={handleDecline}
+          >
+            <InputSimple placeholder="nama user" value={values.user} onChange={handleInput} name="user" />
+            {errors.user && <SimpleErrorText dataError={errors.user} />}
+            <InputSimple type="hidden" placeholder="id user" value={values.id} onChange={handleInput} name="id" />
+        </ModalSimple>
+        )}
+        </Suspense>
+
+        <div className="flex items-center justify-between">
+
+          {/*form cari*/}
+          <form onSubmit={handleSearch}>
+            <div className="flex items-center gap-x-2">
+              <InputSimple
+                placeholder="cari user"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <ButtonSimple type="submit" text="Cari" />
+            </div>
+          </form>  
+
+          <div className="flex items-center gap-x-1">
+            <ButtonSimple 
+              type="button" 
+              text="Tambah" 
+              classCustom="border-blue-500 bg-blue-500 text-white hover:bg-blue-700" 
+              handleClick={() => openModal('add')} />
+            <ButtonSimple 
+              type="button" 
+              text="Edit" 
+              classCustom="border-blue-50 bg-blue-100 text-blue-600 hover:bg-blue-200 disabled:bg-blue-50 disabled:cursor-not-allowed "
+              handleClick={handleClickEdit}
+              disabled={isCheck.length !== 1} />
+            <ButtonSimple 
+              type="button" 
+              text="Delete"
+              classCustom="border-gray-50 bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed "
+              handleClick={handleDelete}
+              disabled={isCheck.length <= 0 } />
           </div>
-        </form>
+        </div>
+        
         <table className="text-sm text-left text-gray-500 w-full">
           <Tableheader 
             checkAll={isCheckAll} 
@@ -127,6 +309,7 @@ const Account = () => {
             isCheckedChild={isCheck}
           />
         </table>
+
         <div className="mt-4 flex items-center justify-between">
           <span className="text-slate-500">Page {currentPage} From {totalPage}</span>
           <Pagination
@@ -136,6 +319,7 @@ const Account = () => {
             onPageChange={handlePageChange}
           />
         </div>
+
       </div>
     </>
   );

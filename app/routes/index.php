@@ -57,4 +57,11 @@ app()->setNamespace('\App\Controllers');
 
 app()->get('/home', 'HomeController@index');
 app()->get('/dashboard', 'HomeController@dashboard');
-app()->get('/account', 'HomeController@account');
+
+app()->group('/account', function() {
+    app()->get('/', 'HomeController@account');
+    app()->post('/', 'HomeController@store');
+    app()->get('/(\d+)', 'HomeController@getById');
+    app()->put('/(\d+)', 'HomeController@updateById');
+    app()->delete('/', 'HomeController@delete');
+});

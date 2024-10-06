@@ -25,11 +25,12 @@
         "leafs/mvc-core": "*",
         "leafs/leaf": "^3.3",
         "leafs/logger": "*",
-        "leafs/cors": "*",
+        "leafs/cors": "^1.2",
         "leafs/auth": "*",
         "leafs/db": "*",
         "leafs/vite": "^0.3.0",
-        "leafs/inertia": "^0.1.0"
+        "leafs/inertia": "^0.1.0",
+        "leafs/form": "^2.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.16"
