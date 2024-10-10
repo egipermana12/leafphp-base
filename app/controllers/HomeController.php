@@ -15,9 +15,9 @@ class HomeController extends \Leaf\Controller
 
   public function dashboard()
   {
-    $data = Home::orderBy('user')->take(10)->get();
+    $user = auth()->status();
     return inertia('Dashboard/Dashboard', [
-      'data' => $data
+      'user' => $user
     ]);
   }
 

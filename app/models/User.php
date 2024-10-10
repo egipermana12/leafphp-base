@@ -4,12 +4,14 @@ namespace App\Models;
 
 class User extends Model
 {
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      * @var array
      */
     protected $fillable = [
-        'fullname', 'email', 'password',
+        'username','fullname', 'email', 'password',
     ];
 
     /**

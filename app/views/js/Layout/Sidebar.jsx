@@ -8,7 +8,7 @@ const Sidebar = () => {
     const sidebarMenu = [
         {name: "Home", link: "/dashboard", icon: <BiHomeAlt size={18} />},
         {name: "Account", link: "/account", icon: <BiGridAlt size={18} />},
-        {name: "Cards", link: "/dashboard", icon: <BiCreditCard size={18} />},
+        {name: "User", link: "/user", icon: <BiUser size={18} />},
         {name: "Contacts", link: "/dashboard", icon: <BiUser size={18} />},
         {name: "Settings", link: "/dashboard", icon: <BiCog size={18} />},
     ];

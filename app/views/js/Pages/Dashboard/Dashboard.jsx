@@ -1,7 +1,8 @@
 import Layout from '@layout/Layout.jsx'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 
-const Dashobard = () => {
+const Dashobard = ({user}) => {
+  console.log(user);
   return (
     <>
       <Head title="Dashobard" />

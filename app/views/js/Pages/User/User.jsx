@@ -1,10 +1,10 @@
-import Layout from '@layout/Layout.jsx';
-import { Pagination, InputSimple, ButtonSimple, SkeletonLoading, SimpleErrorText} from '@components/index.jsx';
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Head, router, usePage } from '@inertiajs/react';
+import Layout from '@layout/Layout.jsx'
+import { Pagination, InputSimple, ButtonSimple, SkeletonLoading, SimpleErrorText} from '@components/index.jsx'
+import { Head, usePage, router } from '@inertiajs/react'
+import React, { useState, useEffect, Suspense, lazy } from 'react'
 import axios from 'axios';
 
-const ModalSimple = lazy(() => import('@components/ModalSimple.jsx'));
+const ModalSimple = lazy(() => import('@components/ModalSimple.jsx'))
 
 const Tableheader = ({ checkAll, isOnChange }) => {
   return (
@@ -22,6 +22,8 @@ const Tableheader = ({ checkAll, isOnChange }) => {
             />
           </th>
           <th className="px-4 py-3">Username</th>
+          <th className="px-4 py-3">fullname</th>
+          <th className="px-4 py-3">email</th>
         </tr>
       </thead>
     </>
@@ -31,7 +33,7 @@ const Tableheader = ({ checkAll, isOnChange }) => {
 const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) => {
   return (
     <>
-      <Suspense fallback={<SkeletonLoading col="3" row="5" />}>
+      <Suspense fallback={<SkeletonLoading col="5" row="5" />}>
         <tbody>
           {data.map((dt, index) => (
             <tr key={dt.id} className="border-b">
@@ -48,7 +50,9 @@ const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) =
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
               </td>
-              <td className="px-4 py-3">{dt.user}</td>
+              <td className="px-4 py-3">{dt.username}</td>
+              <td className="px-4 py-3">{dt.fullname}</td>
+              <td className="px-4 py-3">{dt.email}</td>
             </tr>
           ))}
         </tbody>
@@ -57,31 +61,48 @@ const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) =
   );
 };
 
-
-const Account = () => {
-  const { posts, searchQuery } = usePage().props;
-  const totalPage = posts.pagination.last_page;
-  const currentPage = posts.pagination.current_page;
-  const perPage = posts.pagination.per_page;
+const User = () => {
+  const { users } = usePage().props;
+  const totalPage = users.pagination.last_page;
+  const currentPage = users.pagination.current_page;
+  const perPage = users.pagination.per_page;
   const range = 2;
 
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    setList(posts.posts);
-  }, [posts.posts]);
+    setList(users.users);
+  }, [users.users]);
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
-  const [search, setSearch] = useState(posts.searchQuery || '');
+  const [search, setSearch] = useState('');
 
-  const handleCheckAll = (e) => {
+  // modal state
+  const [activeModal, setActiveModal] = useState(null);
+  const openModal = (modalName) => setActiveModal(modalName);
+  const closeModal = () => setActiveModal(null);
+
+  //state form
+  const [values, setValues] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const handleInput = (e) => {
+    const key = e.target.name;
+    const value = e.target.value;
+    setValues(values => ({
+      ...values,
+      [key]: value
+    }))
+  }
+
+  const handleCheckAll = () => {
     setIsCheckAll(!isCheckAll);
     setIsCheck(list.map(li => li.id));
     if (isCheckAll) {
       setIsCheck([]);
     }
-  };
+  }
 
   const handleChecked = (e) => {
     const { id, checked } = e.target;
@@ -93,36 +114,14 @@ const Account = () => {
     }
   };
 
-  // console.log(isCheck);
-
   const handlePageChange = (page) => {
-    router.get('/account', { page, search });
+    router.get('/user', { page, search });
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    router.get('/account', { search });
-  };
+  const handleSearch = () => {}
 
-  const refreshPage = () => {
-    router.get('/account');
-  }
-
-  const [activeModal, setActiveModal] = useState(null);
-  const openModal = (modalName) => setActiveModal(modalName);
-  const closeModal = () => setActiveModal(null);
-
-  const [values, setValues] = useState({});
-  const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState('');
-
-  const handleInput = (e) => {
-    const key = e.target.name;
-    const value = e.target.value;
-    setValues(values => ({
-      ...values,
-      [key]: value
-    }))
+   const refreshPage = () => {
+    router.get('/user');
   }
 
   const resetForm = () => {
@@ -133,9 +132,9 @@ const Account = () => {
   const saveData = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/account',  values );
+      const response = await axios.post('/user',  values );
       if(response.status === 200){
-        alert(response.data.message);
+        alert("Data berhasil ditambah");
         resetForm();
         closeModal();
         refreshPage();
@@ -149,73 +148,18 @@ const Account = () => {
       if (error.response && error.response.status === 422) {
         setErrors(error.response.data.errors);
       } else {
-        setMessage('Terjadi kesalahan pada server.');
+        console.log('Terjadi kesalahan pada server.');
       }
     }
   }
 
-  const updateData = async (e) => {
-    e.preventDefault();
-    try {
-      let id = parseInt(isCheck[0]);
-      const response = await axios.put(`/account/${id}`,  values );
-      if(response.status === 200){
-        alert(response.data.message);
-        resetForm();
-        closeModal();
-        refreshPage();
-      }else{
-        alert(response.data.message);
-        resetForm();
-        closeModal();
-        refreshPage();
-      }
-    }catch(error){
-      if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
-      } else {
-        setMessage('Terjadi kesalahan pada server.');
-      }
-    }
-  }
-
-  const getDataEdit = async (e) => {
-    try{
-      let id = parseInt(isCheck[0]);
-      const res = await axios.get(`/account/${id}`);
-      setValues(res.data.data);
-    }catch(error){
-      if (error.response && error.response.status === 400) {
-        setErrors(error.response.data.errors);
-      } else {
-        setMessage('Terjadi kesalahan pada server.');
-      }
-    }
-  }
-
-  const deleteData = async (e) => {
-    try{
-      let ids = {ids : isCheck};
-      const res = await axios.delete('/account/', {params: ids});
-      if(res.status === 200){
-        alert(res.data.message);
-        refreshPage();
-      }else{
-        alert(res.data.message);
-        refreshPage();
-      }
-    }catch(error){
-      if (error.res && error.res.status === 400) {
-        setErrors(error.res.data.errors);
-      } else {
-        setMessage('Terjadi kesalahan pada server.');
-      }
-    }
+  const handleClickEdit = (e) => {
+    openModal('edit');
   }
 
   const handleAccept = (e) => {
     if(values.id){
-      updateData(e);
+      closeModal();
     }else{
       saveData(e);
     }
@@ -226,25 +170,12 @@ const Account = () => {
     resetForm();
   };
 
-  const handleClickEdit = (e) => {
-    openModal('edit');
-    getDataEdit();
-  }
-
-  const handleDelete = (e) => {
-    if(confirm("Yakin hapus data ?") === true){
-      deleteData();
-    }else{
-      return false;
-    }
-  }
-
   return (
     <>
-      <Head title="Account" />
+      <Head title="User" />
       <div className="m-2 border boder-gray-200 rounded p-4">
-        
-        <Suspense fallback={<div>Loading...</div>}>
+
+      <Suspense fallback={<div>Loading...</div>}>
         {activeModal && (
           <ModalSimple
             isOpen={!!activeModal}
@@ -255,16 +186,42 @@ const Account = () => {
             onAccept={handleAccept}
             onDecline={handleDecline}
           >
-            <InputSimple placeholder="nama user" value={values.user} onChange={handleInput} name="user" />
-            {errors.user && <SimpleErrorText dataError={errors.user} />}
-            <InputSimple type="hidden" placeholder="id user" value={values.id} onChange={handleInput} name="id" />
+            <div className="flex flex-col w-full gap-y-4">
+              <div>
+                <label 
+                  className="text-zinc-950 text-sm dark:text-white" 
+                  htmlFor="username">Username</label>
+                <InputSimple width="w-full" placeholder="username" value={values.username} onChange={handleInput} name="username" />
+                {errors.username && <SimpleErrorText dataError={errors.username} />}
+              </div>
+              <div>
+                <label 
+                  className="text-zinc-950 text-sm dark:text-white" 
+                  htmlFor="fullname">Fullname</label>
+                  <InputSimple width="w-full" placeholder="fullname" value={values.fullname} onChange={handleInput} name="fullname" />
+                  {errors.fullname && <SimpleErrorText dataError={errors.fullname} />}
+              </div>
+              <div>
+                <label 
+                  className="text-zinc-950 text-sm dark:text-white" 
+                  htmlFor="email">Email</label>
+                  <InputSimple type="email" width="w-full" placeholder="user@email.com" value={values.email} onChange={handleInput} name="email" />
+                  {errors.email && <SimpleErrorText dataError={errors.email} />}
+              </div>
+              <div>
+                <label 
+                  className="text-zinc-950 text-sm dark:text-white" 
+                  htmlFor="email">Password</label>
+                  <InputSimple type="password" width="w-full" placeholder="********" value={values.password} onChange={handleInput} name="password" />
+                  {errors.password && <SimpleErrorText dataError={errors.password} />}
+              </div>
+              <InputSimple width="w-full" type="hidden" placeholder="id user" value={values.id} onChange={handleInput} name="id" />
+            </div>
         </ModalSimple>
         )}
         </Suspense>
 
         <div className="flex items-center justify-between">
-
-          {/*form cari*/}
           <form onSubmit={handleSearch}>
             <div className="flex items-center gap-x-2">
               <InputSimple
@@ -292,22 +249,22 @@ const Account = () => {
               type="button" 
               text="Delete"
               classCustom="border-slate-200 bg-gray-800 text-white hover:bg-gray-800 disabled:text-gray-800 disabled:bg-gray-50 disabled:cursor-not-allowed "
-              handleClick={handleDelete}
+              handleClick={handleClickEdit}
               disabled={isCheck.length <= 0 } />
           </div>
         </div>
         
         <table className="text-sm text-left text-gray-500 w-full">
-          <Tableheader 
-            checkAll={isCheckAll} 
-            isOnChange={handleCheckAll} />
-          <TableBody
-            data={list}
-            current_page={currentPage}
-            per_page={perPage}
-            onChange={handleChecked}
-            isCheckedChild={isCheck}
-          />
+            <Tableheader 
+              checkAll={isCheckAll} 
+              isOnChange={handleCheckAll} />
+            <TableBody
+              data={list}
+              current_page={currentPage}
+              per_page={perPage}
+              onChange={handleChecked}
+              isCheckedChild={isCheck}
+            />
         </table>
 
         <div className="mt-4 flex items-center justify-between">
@@ -322,9 +279,9 @@ const Account = () => {
 
       </div>
     </>
-  );
-};
+  )
+}
 
-Account.layout = (page) => <Layout children={page} title="Account" />;
+User.layout = page => <Layout children={page} title="User" />
 
-export default Account;
+export default User;

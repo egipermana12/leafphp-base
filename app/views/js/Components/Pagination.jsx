@@ -61,7 +61,7 @@ const Pagination = ({range, current_page, total_page, onPageChange}) => {
 
                 <button 
                     onClick={() => onPageChange(current_page + 1)}
-                    className="min-h-[32px] min-w-8 py-1.5 px-2 inline-flex jusify-center items-center gap-x-2 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                    className="min-h-[32px] min-w-8 py-1.5 px-2 inline-flex jusify-center items-center gap-x-2 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
                     disabled={current_page === total_page}
                     >
                     <BiChevronRight size={24} />

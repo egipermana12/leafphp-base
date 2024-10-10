@@ -55,8 +55,27 @@ app()->setNamespace('\App\Controllers');
 */
 // require __DIR__ . '/custom-route.php';
 
+auth()->config([
+  'GUARD_HOME' => '/dashboard',
+  'GUARD_LOGIN' => '/',
+]);
+
+app()->registerMiddleware('auth', function () {
+  $user = auth()->user();
+
+  if (!$user) {
+    auth()->guard('auth');
+  }
+});
+
+app()->get('/', 'LoginController@index');
+app()->post('/', 'LoginController@login');
+app()->post('/logout', 'LoginController@logout');
+
 app()->get('/home', 'HomeController@index');
-app()->get('/dashboard', 'HomeController@dashboard');
+app()->group('/dashboard', ['middleware' => 'auth', function() {
+    app()->get('/', 'HomeController@dashboard');
+}]);
 
 app()->group('/account', function() {
     app()->get('/', 'HomeController@account');
@@ -64,4 +83,9 @@ app()->group('/account', function() {
     app()->get('/(\d+)', 'HomeController@getById');
     app()->put('/(\d+)', 'HomeController@updateById');
     app()->delete('/', 'HomeController@delete');
+});
+
+app()->group('/user', function() {
+  app()->get('/', 'UserController@index');
+  app()->post('/', 'UserController@store');
 });
