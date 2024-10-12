@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Inertia\Inertia;
 use App\Models\Home;
 use App\Validations\UserValidation;
+use App\Models\Module;
 
 class HomeController extends \Leaf\Controller
 {
@@ -17,7 +18,7 @@ class HomeController extends \Leaf\Controller
   {
     $user = auth()->status();
     return inertia('Dashboard/Dashboard', [
-      'user' => $user
+      'user' => $user,
     ]);
   }
 

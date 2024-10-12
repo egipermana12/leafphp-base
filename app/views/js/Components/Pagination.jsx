@@ -13,7 +13,7 @@ const Pagination = ({range, current_page, total_page, onPageChange}) => {
                 <button 
                     key={i}
                     onClick={() => onPageChange(i)}
-                    className={`min-h-[32px] min-w-8 flex justify-center items-center text-gray-800 py-1.5 px-2.5 text-sm rounded-lg focus:outline-none focus:bg-gray-300 ${i === current_page ? 'bg-indigo-600 text-white hover:bg-indigo-600' : 'bg-gray-200 text-gray-900'} `}
+                    className={`min-h-[32px] min-w-8 flex justify-center items-center text-gray-800 py-1.5 px-2.5 text-sm rounded-lg focus:outline-none focus:bg-gray-300 ${i === current_page ? 'bg-black text-white hover:bg-black' : 'bg-gray-200 text-gray-900'} `}
                     disabled={i === current_page}
                     >
                     {i}        

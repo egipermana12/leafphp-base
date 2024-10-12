@@ -1,5 +1,7 @@
 <?php
 
+use App\Middleware\AuthMiddleware;
+
 /*
 |--------------------------------------------------------------------------
 | Set up 404 handler
@@ -60,32 +62,31 @@ auth()->config([
   'GUARD_LOGIN' => '/',
 ]);
 
-app()->registerMiddleware('auth', function () {
-  $user = auth()->user();
-
-  if (!$user) {
-    auth()->guard('auth');
-  }
+app()->registerMiddleware('auth_access', function() {
+  $middleware = new AuthMiddleware();
+  return $middleware->handle();
 });
 
 app()->get('/', 'LoginController@index');
 app()->post('/', 'LoginController@login');
 app()->post('/logout', 'LoginController@logout');
 
+app()->get('/sidebar', 'ModulesController@ModuleSidebar');
+
 app()->get('/home', 'HomeController@index');
-app()->group('/dashboard', ['middleware' => 'auth', function() {
+app()->group('/dashboard', ['middleware' => 'auth_access', function() {
     app()->get('/', 'HomeController@dashboard');
 }]);
 
-app()->group('/account', function() {
+app()->group('/account', ['middleware' => 'auth_access', function() {
     app()->get('/', 'HomeController@account');
     app()->post('/', 'HomeController@store');
     app()->get('/(\d+)', 'HomeController@getById');
     app()->put('/(\d+)', 'HomeController@updateById');
     app()->delete('/', 'HomeController@delete');
-});
+}]);
 
-app()->group('/user', function() {
+app()->group('/user',['middleware' => 'auth_access', function() {
   app()->get('/', 'UserController@index');
   app()->post('/', 'UserController@store');
-});
+}]);
