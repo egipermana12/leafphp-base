@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): array
     {
         return [
-            HomesSeeder::class,
+            // HomesSeeder::class,
+            // RefkotakecSeedsSeeder::class,
+            AnggotaSeeders::class,
         ];
     }
 }

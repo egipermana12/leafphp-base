@@ -2,7 +2,7 @@ import { Link,usePage } from '@inertiajs/react';
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Header from './Header.jsx';
 import axios from 'axios';
-import { BiHomeAlt, BiGridAlt, BiCreditCard, BiUser, BiCog } from "react-icons/bi";
+import { BiHomeAlt, BiGridAlt, BiCreditCard, BiUser, BiCog, BiGroup } from "react-icons/bi";
 
 const Sidebar = lazy(() => import('./Sidebar.jsx'));
 
@@ -15,6 +15,7 @@ const Layout = ({ children }) => {
         "BiGridAlt": <BiGridAlt size={18} />,
         "BiCreditCard": <BiCreditCard size={18} />,
         "BiUser": <BiUser size={18} />,
+        "BiGroup": <BiGroup size={18} />,
         // Tambahkan icon lainnya sesuai kebutuhan
     };
 

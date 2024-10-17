@@ -5,5 +5,10 @@ import Pagination from './Pagination.jsx';
 import SkeletonLoading from './SkeletonLoading.jsx';
 import ModalSimple from './ModalSimple.jsx';
 import SimpleErrorText from './SimpleErrorText.jsx';
+import LabelSimple from './LabelSimple.jsx';
+import TextareaSimple from './TextareaSimple.jsx';
+import SelectSimple from './SelectSimple.jsx';
+import RadioSimple from './RadioSimple.jsx';
+import InputDate from './InputDate.jsx';
 
-export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText}
+export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText, LabelSimple, TextareaSimple, SelectSimple, RadioSimple, InputDate}

@@ -15,7 +15,8 @@ export default defineConfig({
     resolve:{
         alias: {
             '@layout': resolve(__dirname, 'app/views/js/Layout'),
-            '@components': resolve(__dirname, 'app/views/js/Components')
+            '@components': resolve(__dirname, 'app/views/js/Components'),
+            '@utils': resolve(__dirname, 'app/views/js/Utils'),
         }
     },
     css: {

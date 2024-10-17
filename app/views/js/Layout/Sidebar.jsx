@@ -17,7 +17,7 @@ const Sidebar = ({sidebarModule}) => {
                     {
                         sidebarModule.map((val,index) => {
                             return <li key={index}>
-                                <Link href={val.modul_link} className={` flex gap-x-2 font-base items-center py-4 px-4 cursor-pointer transition duration-200 hover:ml-1 ${url === val.modul_link ? "text-gray-800" : "text-gray-400" } ` }>
+                                <Link href={val.modul_link} className={` flex gap-x-2 font-base items-center py-4 px-4 cursor-pointer transition duration-200 hover:ml-1 ${url.startsWith(val.modul_link) ? "text-gray-800" : "text-gray-400" } ` }>
                                     {val.modul_icon}
                                     <span className="text-base"> {val.modul_name} </span>
                                 </Link>
@@ -27,7 +27,7 @@ const Sidebar = ({sidebarModule}) => {
                 </ul>
                 <div className="px-2">
                     <button 
-                        className="flex gap-x-2 font-base items-center py-2 px-4 cursor-pointer transition bg-black text-white w-full rounded rounded-md py-2"
+                        className="flex gap-x-2 font-base items-center py-2 px-4 cursor-pointer bg-gradient-to-r from-gray-900 to-black text-white w-full rounded rounded-md py-2"
                         onClick={logout}
                         >
                         <BiLogOut size={18} /> Logout

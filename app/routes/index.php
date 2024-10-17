@@ -90,3 +90,13 @@ app()->group('/user',['middleware' => 'auth_access', function() {
   app()->get('/', 'UserController@index');
   app()->post('/', 'UserController@store');
 }]);
+
+app()->group('/anggota', ['middleware' => 'auth_access', function() {
+    app()->get('/', 'AnggotaController@index');
+    app()->get('/create', 'AnggotaController@create');
+    app()->post('/', 'AnggotaController@store');
+}]);
+
+app()->group('/wilayah', ['middleware' => 'auth_access', function() {
+    app()->get('/kab', 'KotakecController@getKabupaten');
+}]);
