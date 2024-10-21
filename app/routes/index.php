@@ -99,4 +99,6 @@ app()->group('/anggota', ['middleware' => 'auth_access', function() {
 
 app()->group('/wilayah', ['middleware' => 'auth_access', function() {
     app()->get('/kab', 'KotakecController@getKabupaten');
+    app()->get('/kec/(\d+)', 'KotakecController@getKecamatan');
+    app()->get('/kel/(\d+)/(\d+)', 'KotakecController@getKelurahan');
 }]);

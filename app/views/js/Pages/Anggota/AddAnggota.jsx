@@ -5,6 +5,9 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import axios from 'axios'
 
+//service
+import {getKabupatenService, getKecamatanService, getKelurahanService} from '@services/WilayahServices'
+
 const AddAnggota = () => {
     //state form
     const { errors } = usePage().props;
@@ -61,16 +64,79 @@ const AddAnggota = () => {
         });
     }
 
-    //handle wilaya
-    const [kab, setKab] = useState([]);
+    //handle kab
+    const [kabupaten, setKabupaten] = useState([]);
+    const [selectedKabupaten, setSelectedKabupaten] = useState("");
+    //handle kec
+    const [kecamatan, setKecamatan] = useState([]);
+    const [selectedKecamatan, setSelectedKecamatan] = useState("");
 
-    const getKabupaten =async (e) => {
+    //handle kel
+    const [kelurahan, setKelurahan] = useState([]);
+    const [selectedKelurahan, setSelectedKelurahan] = useState("");
+
+    const getKabupaten = async () => {
         try{
-            const response = await axios.get(`/wilayah/kab`);
-            console.log(response)
+            const response = await getKabupatenService();
+            setKabupaten(response);
         }catch(error){
             console.log(error);
         }
+    }
+
+    useEffect(() => {
+        getKabupaten();  // Call the function when the component mounts
+    }, []);
+
+
+    const getKecamatan = async (kd_kota) => {
+        try{
+            const response = await getKecamatanService(kd_kota);
+            setKecamatan(response);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        if(selectedKabupaten != ""){
+            getKecamatan(selectedKabupaten);
+            setSelectedKecamatan("");
+        }else{
+            setKecamatan([]);
+            setSelectedKecamatan("");
+        }
+    }, [selectedKabupaten]); // Only run when kd_kota changes
+
+    const getKelurahan = async (kd_kec) => {
+        try{
+            const response = await getKelurahanService(kd_kec);
+            setKelurahan(response);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        if(selectedKecamatan != ""){
+            getKelurahan(selectedKecamatan);
+            setSelectedKelurahan("");
+        }else{
+            setKelurahan([]);
+            setSelectedKelurahan("");
+        }
+    }, [selectedKecamatan]); // Only run when kd_kota changes
+
+    const handleKabupatenChange = (e) => {
+        setSelectedKabupaten(e.target.value);
+    }
+
+    const handleKecamatanChange = (e) => {
+        setSelectedKecamatan(e.target.value);
+    }
+
+    const handleKelurahanChange = (e) => {
+        setSelectedKelurahan(e.target.value)
     }
 
     return(
@@ -139,18 +205,36 @@ const AddAnggota = () => {
                         </div>
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
-                            htmlFor="kd_desa" label ="Pilih Kabupaten" />
-                            <SelectSimple width="w-full" onChange={getKabupaten} />
+                            htmlFor="kd_kota" label ="Pilih Kabupaten" />
+                            <SelectSimple 
+                                width="w-full" 
+                                value={selectedKabupaten || ''}
+                                setValue={setSelectedKabupaten}
+                                onChange={handleKabupatenChange} 
+                                data={kabupaten} 
+                                textAtas="Pilih Kabupaten" />
                         </div>
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
-                            htmlFor="kd_desa" label ="Pilih Kecamatan" />
-                            <SelectSimple width="w-full" />
+                            htmlFor="kd_kec" label ="Pilih Kecamatan" />
+                            <SelectSimple 
+                                width="w-full" 
+                                value={selectedKecamatan || ''}
+                                setValue={setSelectedKecamatan}
+                                data={kecamatan} 
+                                onChange={handleKecamatanChange}
+                                textAtas="Pilih Kecamatan" />
                         </div>
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
                             htmlFor="kd_desa" label ="Pilih Kelurahan" />
-                            <SelectSimple width="w-full" />
+                            <SelectSimple 
+                                width="w-full" 
+                                value={selectedKelurahan || ''}
+                                setValue={setSelectedKelurahan}
+                                onChange={handleKelurahanChange}
+                                data={kelurahan} 
+                                textAtas="Pilih Kelurahan" />
                         </div>
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
