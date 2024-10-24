@@ -1,5 +1,5 @@
 import Layout from '@layout/Layout.jsx';
-import { Pagination, InputSimple, ButtonSimple, SkeletonLoading} from '@components/index.jsx';
+import { Pagination, InputSimple, ButtonSimple, SkeletonLoading, SimpleAlert} from '@components/index.jsx';
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 
@@ -64,11 +64,12 @@ const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) =
 
 const Anggota = () => {
     
-    const { anggota } = usePage().props;
+    const { anggota, flash } = usePage().props;
     const totalPage = anggota.pagination.last_page;
     const currentPage = anggota.pagination.current_page;
     const perPage = anggota.pagination.per_page;
     const range = 2;
+    const [showAlert, setShowAlert] = useState(false)
 
     const [list, setList] = useState([]);
 
@@ -115,7 +116,7 @@ const Anggota = () => {
         <>
            <Head title="Anggota" />
             <div className="m-2 border boder-gray-200 rounded p-4">
-
+                <SimpleAlert />
                 <div className="flex items-center justify-between mb-4">
                 <form onSubmit={handleSearch}>
                     <div className="flex items-center gap-x-2">

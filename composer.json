@@ -30,7 +30,8 @@
         "leafs/db": "*",
         "leafs/vite": "^0.3.0",
         "leafs/inertia": "^0.1.0",
-        "leafs/form": "^2.2"
+        "leafs/form": "^2.2",
+        "leafs/session": "^2.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.16"

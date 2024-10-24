@@ -2,21 +2,44 @@
 
 namespace App\Validations;
 
+use App\Validations\FileUploadValidation;
+
 class AnggotaValidation
 {
+    
     public function validasiCreate($data)
     {
+        form()->rule('image', function($file){
+            $validasiImage = new FileUploadValidation();
+            $image = $validasiImage->simpleValidation($file);
+            
+            form()->message('image', '{field}' . $image);
+            
+            // All validations passed
+            return $file === 'image';
+        });
+
         form()->message([
           'required' => '{field} tidak boleh kosong',
-          'text' => '{field} harus text',
+          'date' => '{field} harus format tanggal',
         ]);
-        $validated = form()->validate($data, [
+
+
+        $cek = [
             'nik' => 'required',
             'nama' => 'required',
-            'tgl_gabung' => 'required',
+            'tempat_lahir' => 'required',
+            'tgl_lahir' => 'required|date',
+            'tgl_gabung' => 'required|date',
             'status_anggota' => 'required',
             'jns_kelamin' => 'required',
-        ]);
+        ];
+
+        if(isset($data['file_ktp'])){
+            $cek['file_ktp'] = 'image';
+        }
+
+        $validated = form()->validate($data, $cek);
         return $validated;
     }
 }

@@ -1,13 +1,21 @@
 <?php
 
 namespace App\Controllers;
-use Inertia\Inertia;
+// use Inertia\Inertia;
 use App\Models\Home;
 use App\Validations\UserValidation;
 use App\Models\Module;
 
 class HomeController extends \Leaf\Controller
 {
+
+  public $flash;
+
+  public function __construct()
+  {
+    $this->flash = null;
+  }
+
   public function index()
   {
     $data = Home::orderBy('user')->take(10)->get();
@@ -16,9 +24,9 @@ class HomeController extends \Leaf\Controller
 
   public function dashboard()
   {
-    $user = auth()->status();
     return inertia('Dashboard/Dashboard', [
-      'user' => $user,
+      'user' => assets('img/coba.jpeg'),
+      'flash' => $this->flash
     ]);
   }
 

@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
 
-const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], textAtas = 'Pilih', value='', setValue}) => {
+const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], textAtas = 'Pilih', value='', setValue, jenisSelect}) => {
+
+    const renderOption = () => {
+        return data.map((item, index) => {
+            if(jenisSelect === 'simple'){
+                return (
+                    <option key={index} value={`${item.id}`}>{item.nama}</option>
+                )
+            }else{
+                return(
+                    <option key={index} value={`${item.kd_kota}.${item.kd_kec}.${item.kd_kel}`}>{item.nm_wilayah}</option>
+                )
+            }
+        })
+    }
+
     return (
         <>
             <select 
@@ -10,9 +25,7 @@ const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], tex
                 value={value}
                 >
                 <option value=''>{textAtas}</option>
-                {data.map((item,index) => (
-                    <option key={index} value={`${item.kd_kota}.${item.kd_kec}.${item.kd_kel}`}>{item.nm_wilayah}</option>
-                ))}
+                {renderOption()}
             </select>
         </>
     )

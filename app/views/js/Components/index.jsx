@@ -10,5 +10,6 @@ import TextareaSimple from './TextareaSimple.jsx';
 import SelectSimple from './SelectSimple.jsx';
 import RadioSimple from './RadioSimple.jsx';
 import InputDate from './InputDate.jsx';
+import SimpleAlert from './SimpleAlert.jsx';
 
-export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText, LabelSimple, TextareaSimple, SelectSimple, RadioSimple, InputDate}
+export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText, LabelSimple, TextareaSimple, SelectSimple, RadioSimple, InputDate, SimpleAlert}
