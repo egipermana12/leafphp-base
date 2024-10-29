@@ -112,6 +112,11 @@ const Anggota = () => {
       router.visit('/anggota/create');
     }
 
+    const handleEdit = (e) => {
+      let id = parseInt(isCheck[0]);
+      router.visit(`/anggota/edit/${id}`);
+    }
+
     return (
         <>
            <Head title="Anggota" />
@@ -140,6 +145,7 @@ const Anggota = () => {
                       text="Edit" 
                       classCustom="border-slate-200 bg-gray-800 text-white hover:bg-gray-800 disabled:text-gray-800 disabled:bg-gray-50 disabled:cursor-not-allowed "
                       disabled={isCheck.length !== 1}
+                      handleClick={handleEdit}
                       />
                     <ButtonSimple 
                       type="button" 

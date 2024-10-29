@@ -2,6 +2,7 @@
 
 namespace App\Validations;
 
+
 class FileUploadValidation
 {
     public function simpleValidation($file)
@@ -34,5 +35,27 @@ class FileUploadValidation
         }
         
         return $error;
+    }
+
+    public function renameFile($file)
+    {
+        $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $uniqueFileName = uniqid('img_', true) . '.' .$fileExtension;
+        return $uniqueFileName;
+    }
+
+    public function simpleUpload($file, $destination)
+    {
+        $temp = $file['tmp_name'];
+        $upload = move_uploaded_file($temp, $destination);
+        if($upload){
+            return true;
+        }
+        return false;
+    }
+
+    public function getImage($file, $dir)
+    {
+        return "/showImage?file=$file&dir=$dir";
     }
 }

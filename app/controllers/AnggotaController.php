@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\Anggota;
 use Inertia\Inertia;
 use App\Validations\AnggotaValidation;
+use App\Validations\FileUploadValidation;
 
 class AnggotaController extends Controller
 {
@@ -83,6 +84,16 @@ class AnggotaController extends Controller
             $errors = form()->errors();
             return inertia('Anggota/AddAnggota', ['errors' => $errors]);
         }else{
+            if($file){
+                $newFile = new FileUploadValidation();
+                $newFileName = $newFile->renameFile($file);
+                unset($data['file_ktp']);
+                $data['file_ktp'] = $newFileName;
+
+                $dir = 'storage/app/public/';
+                $newDestination = $dir.$newFileName;
+                $newFile->simpleUpload($file, $newDestination);
+            }
             $save = Anggota::create($data)->save();
             if($save){
                  $daftar = $this->genDaftar(1, null);
@@ -99,5 +110,26 @@ class AnggotaController extends Controller
             }
         }
 
+    }
+
+    public function edit($id)
+    {
+        $find = Anggota::find($id);
+        $file_ktp_ready = $find['file_ktp'];
+        if($file_ktp_ready != ''){
+            $newFile = new FileUploadValidation();
+            $url_img = $newFile->getImage($find['file_ktp'], 'storage/app/public/');
+            unset($find['file_ktp']);
+            $find['file_ktp'] = $url_img;
+        }
+        if($find)
+        {
+            return inertia('Anggota/EditAnggota', [
+                'errors' => [],
+                'anggota' => $find
+            ]);
+        }else{
+            response()->redirect('anggota');
+        }
     }
 }

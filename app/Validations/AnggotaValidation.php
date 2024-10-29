@@ -16,7 +16,10 @@ class AnggotaValidation
             form()->message('image', '{field}' . $image);
             
             // All validations passed
-            return $file === 'image';
+            if($image != ''){
+                return $file === 'image';
+            }
+            return true;
         });
 
         form()->message([

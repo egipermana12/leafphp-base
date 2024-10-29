@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], textAtas = 'Pilih', value='', setValue, jenisSelect}) => {
+const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], textAtas = 'Pilih', value='', setValue, jenisSelect, name}) => {
 
     const renderOption = () => {
         return data.map((item, index) => {
@@ -23,6 +23,7 @@ const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], tex
                 className={` ${width} bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5`}
                 onChange={(e) => {onChange, setValue(e.target.value)}}
                 value={value}
+                name={name}
                 >
                 <option value=''>{textAtas}</option>
                 {renderOption()}
