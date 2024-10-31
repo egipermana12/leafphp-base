@@ -7,41 +7,37 @@ import React, { useState, useEffect } from 'react';
 //service
 import {getKabupatenService, getKecamatanService, getKelurahanService} from '@services/WilayahServices'
 import {getPekerjaanServices} from '@services/PekerjaanServices'
+import {editAnggota} from '@services/AnggotaServices'
 
 const EditAnggota = () => {
     const {errors, anggota} = usePage().props;
 
     const [values, setValues] = useState(anggota);
-    const [filePrev, setFilePrev] = useState(values.file_ktp || null);
 
-    console.log(values.file_ktp)
+    const [id, setId] = useState(anggota.id);
+    const [filePrev, setFilePrev] = useState(values.file_ktp || null);
 
     const handleInput = (e) => {
         const key = e.target.name;
         let value;
-        if(e.target.type === 'file'){
-            value = e.target.files[0];
-            setFilePrev(URL.createObjectURL(e.target.files[0]));
-            setValues(values => ({
-                ...values,
-                [key]: value
-            }));
-        }else{
-            value = e.target.value;
-            if(key === 'nik'){
-                if (/^\d*$/.test(value) && value.length <= 16){
-                    setValues(values => ({
-                        ...values,
-                        [key]: value
-                    }));
-                }
-                return;
+        
+        value = e.target.value;
+        if(key === 'nik'){
+            if (/^\d*$/.test(value) && value.length <= 16){
+                setValues(values => ({
+                    ...values,
+                    [key]: value
+                }));
             }
+            return;
         }
+        
         setValues(values => ({
           ...values,
           [key]: value
         }))
+
+        console.log(values.tgl_lahir)
     }
 
      //handle kab
@@ -108,14 +104,35 @@ const EditAnggota = () => {
     }, [selectedKecamatan]); // Only run when kd_kota changes
 
     const handleKabupatenChange = (e) => {
+        const fakeEvent = {
+            target: {
+                name: e.target.name,
+                value: e.target.value
+            }
+        }
+        handleInput(fakeEvent);
         setSelectedKabupaten(e.target.value);
     }
 
     const handleKecamatanChange = (e) => {
+        const fakeKec = {
+            target: {
+                name: e.target.name,
+                value: e.target.value
+            }
+        }
+        handleInput(fakeKec);
         setSelectedKecamatan(e.target.value);
     }
 
     const handleKelurahanChange = (e) => {
+        const fakeEvent = {
+            target: {
+                name: e.target.name,
+                value: e.target.value
+            }
+        }
+        handleInput(fakeEvent);
         setSelectedKelurahan(e.target.value)
     }
 
@@ -135,6 +152,13 @@ const EditAnggota = () => {
     }, [])
 
     const handlePekerjaanChange = (e) => {
+        const fakeEvent = {
+            target: {
+                name: e.target.name,
+                value: e.target.value
+            }
+        }
+        handleInput(fakeEvent);
         setSelectedPekerjaan(e.target.value)
     }
 
@@ -150,6 +174,7 @@ const EditAnggota = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        editAnggota(id, values);
     }
     
     return (
@@ -181,7 +206,7 @@ const EditAnggota = () => {
                                 <div className="flex flex-col gap-y-1 w-full">
                                     <LabelSimple  
                                     htmlFor="tgl_lahir" label ="Tanggal Lahir" />
-                                    <InputDate value={values.tgl_lahir} name="tgl_gabung" onChange={handleInput} width="w-full" />
+                                    <InputDate value={new Date(values.tgl_lahir)} name="tgl_lahir" onChange={handleInput} width="w-full" />
                                     {errors.tgl_lahir && <SimpleErrorText dataError={errors.tgl_lahir} />}
                                 </div>
                             </div>
@@ -198,7 +223,7 @@ const EditAnggota = () => {
                                 <div className="flex flex-col gap-y-1 w-full">
                                     <LabelSimple  
                                     htmlFor="tgl_gabung" label ="Tanggal Gabung" />
-                                    <InputDate value={values.tgl_gabung} name="tgl_gabung" onChange={handleInput} width="w-full" />
+                                    <InputDate value={new Date(values.tgl_gabung)} name="tgl_gabung" onChange={handleInput} width="w-full" />
                                     {errors.tgl_gabung && <SimpleErrorText dataError={errors.tgl_gabung} />}
                                 </div>
                                 <div className="flex flex-col gap-y-1 w-full">
@@ -214,7 +239,10 @@ const EditAnggota = () => {
                             <div className="flex flex-col gap-y-1 mb-4">
                                 <LabelSimple  
                                 htmlFor="alamat" label ="Alamat" />
-                                <TextareaSimple value={values.alamat} name="alamat" onChange={handleInput} width="w-full" />
+                                <TextareaSimple 
+                                    value={values.alamat} 
+                                    name="alamat" 
+                                    onChange={handleInput} width="w-full" />
                             </div>
                             <div className="flex flex-col gap-y-1 mb-4">
                                 <LabelSimple  
@@ -225,6 +253,7 @@ const EditAnggota = () => {
                                     setValue={setSelectedKabupaten}
                                     onChange={handleKabupatenChange} 
                                     data={kabupaten} 
+                                    name="kd_kota"
                                     textAtas="Pilih Kabupaten" />
                             </div>
                             <div className="flex flex-col gap-y-1 mb-4">
@@ -235,6 +264,7 @@ const EditAnggota = () => {
                                     value={selectedKecamatan || values.kd_kec}
                                     setValue={setSelectedKecamatan}
                                     data={kecamatan} 
+                                    name="kd_kec"
                                     onChange={handleKecamatanChange}
                                     textAtas="Pilih Kecamatan" />
                             </div>
@@ -243,10 +273,11 @@ const EditAnggota = () => {
                                 htmlFor="kd_desa" label ="Pilih Kelurahan" />
                                 <SelectSimple 
                                     width="w-full" 
-                                    value={selectedKelurahan || ''}
+                                    value={selectedKelurahan || values.kd_desa}
                                     setValue={setSelectedKelurahan}
                                     onChange={handleKelurahanChange}
                                     data={kelurahan} 
+                                    name="kd_desa"
                                     textAtas="Pilih Kelurahan" />
                             </div>
                             <div className="flex flex-col gap-y-1 mb-4">
@@ -303,6 +334,7 @@ const EditAnggota = () => {
                           text="Update" 
                           classCustom="px-12 ml-4 bg-gradient-to-r from-gray-900 to-black text-white" 
                             />
+                    <InputSimple name="id" type="hidden" value={id} />
                 </form>
             </div>
         </>

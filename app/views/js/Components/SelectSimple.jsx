@@ -21,8 +21,8 @@ const SelectSimple = ({width='w-full', id='id-default', onChange, data = [], tex
             <select 
                 id={id} 
                 className={` ${width} bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block p-2.5`}
-                onChange={(e) => {onChange, setValue(e.target.value)}}
-                value={value}
+                onChange={onChange}
+                value={value || ''}
                 name={name}
                 >
                 <option value=''>{textAtas}</option>

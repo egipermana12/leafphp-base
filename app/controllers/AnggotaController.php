@@ -132,4 +132,63 @@ class AnggotaController extends Controller
             response()->redirect('anggota');
         }
     }
+
+    public function update()
+    {
+        $id = request()->get('id');
+        $find = Anggota::find($id);
+        $data = [
+            'nik' => request()->get('nik'),
+            'nama' => request()->get('nama'),
+            'tempat_lahir' => request()->get('tempat_lahir'),
+            'tgl_lahir' => request()->get('tgl_lahir'),
+            'tgl_gabung' => request()->get('tgl_gabung'),
+            'jns_kelamin' => request()->get('jns_kelamin'),
+            'status_anggota' => request()->get('status_anggota'),
+            'alamat' => request()->get('alamat'),
+            'kd_kota' => request()->get('kd_kota'),
+            'kd_kec' => request()->get('kd_kec'),
+            'kd_desa' => request()->get('kd_desa'),
+            'kd_pekerjaan' => request()->get('kd_pekerjaan'),
+        ];
+        if($find)
+        {
+            $validation = new AnggotaValidation();
+            $validated = $validation->validasiCreate($data);
+            if(!$validated){
+                $errors = form()->errors();
+                return inertia('Anggota/EditAnggota', [
+                    'errors' => $errors,
+                    'anggota' => $find
+                ]);
+            }else{
+                $find->nik = $data['nik'];
+                $find->nama = $data['nama'];
+                $find->tempat_lahir = $data['tempat_lahir'];
+                $find->tgl_lahir = $data['tgl_lahir'];
+                $find->tgl_gabung = $data['tgl_gabung'];
+                $find->jns_kelamin = $data['jns_kelamin'];
+                $find->status_anggota = $data['status_anggota'];
+                $find->alamat = $data['alamat'];
+                $find->kd_kota = $data['kd_kota'];
+                $find->kd_kec = $data['kd_kec'];
+                $find->kd_desa = $data['kd_desa'];
+                $find->kd_pekerjaan = $data['kd_pekerjaan'];
+                $update = $find->save();
+                if($update){
+                    $daftar = $this->genDaftar(1, null);
+                    $anggota = $daftar;
+
+                    $this->flash = ['status' => 'success', 'message' => 'Data anggota berhasil diupdate!'];
+
+                    return inertia('Anggota/Anggota', [
+                        'anggota' => $anggota, 
+                        'flash' => $this->flash
+                    ]);
+                }else{
+                    
+                }
+            }
+        }
+    }
 }

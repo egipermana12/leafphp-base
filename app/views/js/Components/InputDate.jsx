@@ -33,6 +33,8 @@ const InputDate = (props) => {
     const handleDate = date => {
         setDate(date);
         setIsShowed(false);
+        const formattedDate = format(date, 'dd/MM/yyyy', { locale: id });
+        props.onChange({ target: { name, value: formattedDate } });
     }
 
      const formattedDate = format(date, 'dd/MM/yyyy', { locale: id });

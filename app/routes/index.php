@@ -96,6 +96,7 @@ app()->group('/anggota', ['middleware' => 'auth_access', function() {
     app()->get('/create', 'AnggotaController@create');
     app()->post('/', 'AnggotaController@store');
     app()->get('/edit/(\d+)', 'AnggotaController@edit');
+    app()->patch('/', 'AnggotaController@update');
 }]);
 
 app()->group('/wilayah', ['middleware' => 'auth_access', function() {
@@ -104,4 +105,6 @@ app()->group('/wilayah', ['middleware' => 'auth_access', function() {
     app()->get('/kel/(\d+)/(\d+)', 'KotakecController@getKelurahan');
 }]);
 
-app()->get('/showImage', 'ImageHelperController@showImage');
+app()->group('/showImage', ['middleware' => 'auth_access', function() {
+    app()->get('/', 'ImageHelperController@showImage');
+}]);

@@ -27,3 +27,15 @@ export const submitAnggota = (values) => {
         },
     });
 }
+
+
+export const editAnggota = (id, values) => {
+    const formattedValues = {
+        ...values,
+            // Pastikan 'tanggal' adalah key untuk tanggal yang ingin dikonversi
+        tgl_gabung: format(new Date(values.tgl_gabung), 'yyyy-MM-dd'),
+        tgl_lahir: format(new Date(values.tgl_lahir), 'yyyy-MM-dd')
+    };
+
+    router.patch(`/anggota`, formattedValues);
+}

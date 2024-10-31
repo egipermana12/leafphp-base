@@ -20,7 +20,7 @@ const AddAnggota = () => {
         tgl_gabung: new Date(),
         tgl_lahir: new Date(),
         jns_kelamin: 'L', 
-        status_anggota: 'aktif'
+        status_anggota: 'aktif',
     });
 
     const handleInput = (e) => {
@@ -190,7 +190,7 @@ const AddAnggota = () => {
                             <div className="flex flex-col gap-y-1 w-full">
                                 <LabelSimple  
                                 htmlFor="tgl_lahir" label ="Tanggal Lahir" />
-                                <InputDate value={values.tgl_lahir} name="tgl_gabung" onChange={handleInput} width="w-full" />
+                                <InputDate value={values.tgl_lahir} name="tgl_lahir" onChange={handleInput} width="w-full" />
                                 {errors.tgl_lahir && <SimpleErrorText dataError={errors.tgl_lahir} />}
                             </div>
                         </div>
@@ -223,14 +223,16 @@ const AddAnggota = () => {
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
                             htmlFor="alamat" label ="Alamat" />
-                            <TextareaSimple value={values.alamat} name="alamat" width="w-full" />
+                            <TextareaSimple 
+                                value={values.alamat} 
+                                name="alamat" width="w-full" />
                         </div>
                         <div className="flex flex-col gap-y-1 mb-4">
                             <LabelSimple  
                             htmlFor="kd_kota" label ="Pilih Kabupaten" />
                             <SelectSimple 
                                 width="w-full" 
-                                value={selectedKabupaten || ''}
+                                value={selectedKabupaten || values.kd_kota}
                                 setValue={setSelectedKabupaten}
                                 onChange={handleKabupatenChange} 
                                 data={kabupaten} 
@@ -241,7 +243,7 @@ const AddAnggota = () => {
                             htmlFor="kd_kec" label ="Pilih Kecamatan" />
                             <SelectSimple 
                                 width="w-full" 
-                                value={selectedKecamatan || ''}
+                                value={selectedKecamatan || values.kd_kec}
                                 setValue={setSelectedKecamatan}
                                 data={kecamatan} 
                                 onChange={handleKecamatanChange}
@@ -252,7 +254,7 @@ const AddAnggota = () => {
                             htmlFor="kd_desa" label ="Pilih Kelurahan" />
                             <SelectSimple 
                                 width="w-full" 
-                                value={selectedKelurahan || ''}
+                                value={selectedKelurahan || values.kd_desa}
                                 setValue={setSelectedKelurahan}
                                 onChange={handleKelurahanChange}
                                 data={kelurahan} 
@@ -264,7 +266,7 @@ const AddAnggota = () => {
                             <SelectSimple 
                                 width="w-full"
                                 textAtas="Pilih Pekerjaan"
-                                value={selectedPekerjaan || ''}
+                                value={selectedPekerjaan || values.kd_pekerjaan}
                                 setValue={setSelectedPekerjaan}
                                 onChange={handlePekerjaanChange}
                                 jenisSelect="simple"
