@@ -30,14 +30,15 @@ const InputDate = (props) => {
         focus.indexOf(1) < 0 && setIsShowed(false);
     };
 
+    const formattedDate = format(date, 'dd/MM/yyyy', { locale: id });
+
     const handleDate = date => {
         setDate(date);
         setIsShowed(false);
-        const formattedDate = format(date, 'dd/MM/yyyy', { locale: id });
-        props.onChange({ target: { name, value: formattedDate } });
+        const formatted = format(date, 'dd/MM/yyyy', { locale: id });
+        props.onChange({ target: { name, value: formatted } });
     }
 
-     const formattedDate = format(date, 'dd/MM/yyyy', { locale: id });
 
     return (
         <>

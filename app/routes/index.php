@@ -97,6 +97,13 @@ app()->group('/anggota', ['middleware' => 'auth_access', function() {
     app()->post('/', 'AnggotaController@store');
     app()->get('/edit/(\d+)', 'AnggotaController@edit');
     app()->patch('/', 'AnggotaController@update');
+    app()->get('/apiAnggota', 'AnggotaController@daftarAnggotaApi');
+    app()->get('/apiGetAnggota/(\d+)', 'AnggotaController@getAnggotaApi');
+}]);
+
+app()->group('/simpanan', ['middleware' => 'auth_access', function() {
+    app()->get('/', 'SimpananController@index');
+    app()->get('/create', 'SimpananController@create');
 }]);
 
 app()->group('/wilayah', ['middleware' => 'auth_access', function() {

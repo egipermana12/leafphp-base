@@ -2,27 +2,25 @@ import Layout from '@layout/Layout.jsx';
 import { Pagination, InputSimple, ButtonSimple, SkeletonLoading, SimpleAlert} from '@components/index.jsx';
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
-import DaftarAnggota from './DaftarAnggota.jsx'
+import DaftarSimpanan from './DaftarSimpanan.jsx'
 
 
-const Anggota = () => {
-    const {anggota} = usePage().props
+const Simpanan = () => {
+    const {simpanan} = usePage().props
     const [showAlert, setShowAlert] = useState(false)
     return (
         <>
-           <Head title="Anggota" />
+           <Head title="Simpanan" />
             <div className="m-2 border boder-gray-200 rounded p-4">
                 <SimpleAlert />
-              
                 <Suspense fallback={<SkeletonLoading col="3" row="5" />}>
-                  <DaftarAnggota anggota = {anggota} />
+                  <DaftarSimpanan simpanan= {simpanan} />
                 </Suspense>
-
             </div>
         </>
     )
 }
 
-Anggota.layout = (page) => <Layout children={page} title="Anggota" />;
+Simpanan.layout = (page) => <Layout children={page} title="Simpanan" />;
 
-export default Anggota;
+export default Simpanan;

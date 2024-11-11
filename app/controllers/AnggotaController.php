@@ -90,7 +90,7 @@ class AnggotaController extends Controller
                 unset($data['file_ktp']);
                 $data['file_ktp'] = $newFileName;
 
-                $dir = 'storage/app/public/';
+                $dir = 'storage/app/public/ktp/';
                 $newDestination = $dir.$newFileName;
                 $newFile->simpleUpload($file, $newDestination);
             }
@@ -118,7 +118,7 @@ class AnggotaController extends Controller
         $file_ktp_ready = $find['file_ktp'];
         if($file_ktp_ready != ''){
             $newFile = new FileUploadValidation();
-            $url_img = $newFile->getImage($find['file_ktp'], 'storage/app/public/');
+            $url_img = $newFile->getImage($find['file_ktp'], 'storage/app/public/ktp/');
             unset($find['file_ktp']);
             $find['file_ktp'] = $url_img;
         }
@@ -190,5 +190,46 @@ class AnggotaController extends Controller
                 }
             }
         }
+    }
+
+    public function daftarAnggotaApi()
+    {
+        $page = request()->get('page') ? (int)request()->get('page') : 1;
+        $search = request()->get('search') ? request()->get('search') : '';
+        $perPage = 1;
+        $offset = ($page - 1) * $perPage;
+        $query = Anggota::query()->offset($offset)->limit($perPage);
+        if($search != ''){
+            $query->where('nama', 'LIKE', '%' . $search . '%');
+        }
+
+        $daftar = $query->get();
+        $count = Anggota::when($search, fn($q) => $q->where('nama', 'LIKE', '%' . $search . '%'))->count();
+
+        $anggota = [
+          'anggota' => $daftar,
+          'pagination' => [
+            'total' => $count,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'last_page' => ceil($count / $perPage)
+          ],
+          'searchQuery' => $search
+        ];
+        response()->json([
+          'status' => true,
+          'message' => 'Data Anggota',
+          'data' => $anggota
+      ], 200);
+    }
+
+    public function getAnggotaApi($id)
+    {
+        $find = Anggota::find($id);
+        response()->json([
+          'status' => true,
+          'message' => 'Data Anggota',
+          'data' => $find
+      ], 200);
     }
 }

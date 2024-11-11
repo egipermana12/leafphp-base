@@ -3,6 +3,8 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { InputSimple, ButtonSimple, LabelSimple, TextareaSimple, SelectSimple, SimpleErrorText, RadioSimple, InputDate} from '@components/index.jsx';
 import { BiTrashAlt } from "react-icons/bi";
 import React, { useState, useEffect } from 'react';
+import { format, parse } from 'date-fns';
+
 
 //service
 import {getKabupatenService, getKecamatanService, getKelurahanService} from '@services/WilayahServices'
@@ -36,8 +38,6 @@ const EditAnggota = () => {
           ...values,
           [key]: value
         }))
-
-        console.log(values.tgl_lahir)
     }
 
      //handle kab

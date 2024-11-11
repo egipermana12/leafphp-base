@@ -8,4 +8,11 @@ class Anggota extends Model
     protected $fillable = [
         'nik', 'nama', 'tempat_lahir', 'tgl_lahir', 'gender', 'alamat', 'kd_desa', 'kd_kec', 'kd_kota', 'kd_pekerjaan', 'tgl_gabung', 'status_anggota', 'file_ktp'
     ];
+
+    public function simpanan()
+    {
+        return $this->belongsTo(SimpananANggota::class);
+    }
 }
+
+

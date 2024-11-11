@@ -18,6 +18,7 @@ export default defineConfig({
             '@components': resolve(__dirname, 'app/views/js/Components'),
             '@utils': resolve(__dirname, 'app/views/js/Utils'),
             '@services': resolve(__dirname, 'app/views/js/Services'),
+            '@parts': resolve(__dirname, 'app/views/js/Parts'),
         }
     },
     css: {
