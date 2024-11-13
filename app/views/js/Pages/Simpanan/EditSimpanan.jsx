@@ -8,16 +8,13 @@ const ModalSimple = lazy(() => import('@components/ModalSimple.jsx'))
 import DaftarAnggotaPart from '@parts/DaftarAnggotaPart.jsx'
 import {apiGetAnggota} from '@services/AnggotaServices'
 import currency from '@utils/formatCurrency.js'
-import {submitSimpanan} from '@services/SimpananServices.js'
+import {updateSimpanan} from '@services/SimpananServices'
 
 const AddSimpanan = () => {
-    const { errors } = usePage().props;
+    const { errors, simpanan } = usePage().props;
     console.log(errors)
-    const [values, setValues] = useState({
-        tanggal_transaksi: new Date(),
-        harga: '',
-        harga_formateed: ''
-    });
+    const [values, setValues] = useState(simpanan);
+    const [id, setId] = useState(simpanan.id);
 
     const [activeModal, setActiveModal] = useState(false);
     const openModal = () => setActiveModal(true);
@@ -90,8 +87,7 @@ const AddSimpanan = () => {
 
     const simpananAnggota = (e) => {
         e.preventDefault()
-        console.log(values)
-        submitSimpanan(values)
+        updateSimpanan(values)
     }
 
     return (
@@ -107,7 +103,7 @@ const AddSimpanan = () => {
                         />
                 )}
             </Suspense>
-            <Head title="Tambah Simpanan" />
+            <Head title="Edit Simpanan" />
             <div className="m-2 border boder-gray-200 rounded py-4 px-6">
                 <form onSubmit={simpananAnggota}>
                     <div className="flex flex-row gap-4">
@@ -116,12 +112,12 @@ const AddSimpanan = () => {
                                 <div className="flex flex-col w-2/4">
                                     <LabelSimple  
                                     htmlFor="nik" label ="NIK Anggota" />
-                                    <InputSimple width="w-full" placeholder="NIK Anggota" value={values.nik} onChange={handleInput} name="nik" isError={errors.refid_anggota} disabled />    
+                                    <InputSimple width="w-full" placeholder="NIK Anggota" value={values.refid_anggota} onChange={handleInput} name="nik" isError={errors.refid_anggota} disabled />    
                                 </div>
                                 <div className="flex flex-col w-2/4">
                                     <LabelSimple  
                                     htmlFor="nik" label ="Nama Anggota" />
-                                    <InputSimple width="w-full" placeholder="Nama Anggota" value={values.nama} onChange={handleInput} name="nik" isError={errors.refid_anggota} disabled />    
+                                    <InputSimple width="w-full" placeholder="Nama Anggota" value={values.refid_anggota} onChange={handleInput} name="nik" isError={errors.refid_anggota} disabled />    
                                 </div>
                                 <div className="flex flex-col">
                                     <span>&nbsp;</span>
@@ -139,7 +135,7 @@ const AddSimpanan = () => {
                                 <SelectSimple 
                                     jenisSelect="simple"
                                     name="jenis_simpanan"
-                                    value={selectPinjamanType}
+                                    value={selectPinjamanType || values.jenis_simpanan }
                                     setValue={setSelectPinjamanType}
                                     onChange={handleSelectPinjamanType}
                                     data={pinjamanType}
@@ -150,14 +146,14 @@ const AddSimpanan = () => {
                             <div className="flex flex-col w-5/6 mb-4">
                                 <LabelSimple  
                                 htmlFor="tgl_lahir" label ="Tanggal Transaksi" />
-                                <InputDate value={values.tanggal_transaksi} name="tanggal_transaksi" onChange={handleInput} width="w-full" />
+                                <InputDate value={new Date(values.tanggal_transaksi)} name="tanggal_transaksi" onChange={handleInput} width="w-full" />
                                 {errors.tanggal_transaksi && <SimpleErrorText dataError={errors.tanggal_transaksi} />}
                             </div>
                             <div className="flex flex-col w-5/6 mb-4">
                                 <LabelSimple  
                                 htmlFor="tgl_lahir" label ="Jumlah Simpanan" />
                                 <InputSimple 
-                                    value={values.harga_formateed}   
+                                    value={currency(values.harga_formateed).formattedValue}   
                                     name="harga_formateed" 
                                     onChange={handleInput} 
                                     width="w-full" />
@@ -177,6 +173,7 @@ const AddSimpanan = () => {
                     </div>
                     <InputSimple width="w-full" type="hidden" placeholder="NIK Anggota" value={values.refid_anggota} onChange={handleInput} name="refid_anggota" isError={errors.id} disabled /> 
                      <InputSimple width="w-full" type="hidden" placeholder="NIK Anggota" value={values.harga} onChange={handleInput} name="harga" isError={errors.id} disabled /> 
+                     <InputSimple name="id" type="hidden" value={id} /> 
                      <ButtonSimple 
                       type="button" 
                       text="Batal" 
@@ -193,7 +190,7 @@ const AddSimpanan = () => {
     )
 }
 
-AddSimpanan.layout = (page) => <Layout children={page} title="AddSimpanan" />;
+AddSimpanan.layout = (page) => <Layout children={page} title="EditSimpanan" />;
 
 export default AddSimpanan;
 

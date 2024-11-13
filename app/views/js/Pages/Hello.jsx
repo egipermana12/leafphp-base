@@ -1,13 +1,13 @@
 import { Link, Head } from '@inertiajs/react';
 
-const Hello = () => {
-
+const Hello = ({ auth }) => {
     return (
         <>
-            <Head title="Hehe" />
+            <Head title="Hello" />
             <div>
-                <h1 className="text-blue-500">Hello World from React</h1>
-                               
+                <h1>Hello World from React</h1>
+                <p>Current user: {auth?.user?.name ?? 'No auth is active'}</p>
+                <Link href="/login">Go to Login</Link>
             </div>
         </>
     );

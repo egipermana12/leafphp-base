@@ -1,6 +1,7 @@
 <?php
 
 use App\Middleware\AuthMiddleware;
+use App\Middleware\HandleInertiaRequests;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,8 @@ app()->registerMiddleware('auth_access', function() {
   return $middleware->handle();
 });
 
+app()->use(HandleInertiaRequests::class);
+
 app()->get('/', 'LoginController@index');
 app()->post('/', 'LoginController@login');
 app()->post('/logout', 'LoginController@logout');
@@ -104,6 +107,9 @@ app()->group('/anggota', ['middleware' => 'auth_access', function() {
 app()->group('/simpanan', ['middleware' => 'auth_access', function() {
     app()->get('/', 'SimpananController@index');
     app()->get('/create', 'SimpananController@create');
+    app()->post('/', 'SimpananController@store');
+    app()->get('/edit/(\d+)', 'SimpananController@edit');
+    app()->patch('/', 'SimpananController@update');
 }]);
 
 app()->group('/wilayah', ['middleware' => 'auth_access', function() {

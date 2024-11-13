@@ -8,6 +8,10 @@ class SimpananAnggota extends Model
 {
     protected $table = 'anggota_simpanan';
 
+    protected $fillable = [
+        'refid_anggota', 'tanggal_transaksi', 'harga', 'jenis_simpanan', 'ket'
+    ];
+
     public function anggota()
     {
         return $this->hasMany(Anggota::class);

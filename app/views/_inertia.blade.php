@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title inertia>Document</title>
-
     <?php echo \Leaf\Vite::reactRefresh(); ?>
     <?php echo vite(['/js/app.jsx', "/js/Pages/{$page['component']}.jsx"]); ?>
     <?php

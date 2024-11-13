@@ -7,8 +7,8 @@ export const submitAnggota = (values) => {
     // Mengonversi tanggal jika ada key 'tanggal' dalam values
     const formattedValues = {
         ...values,
-        tgl_gabung: format(parse(values.tgl_gabung, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
-        tgl_lahir: format(parse(values.tgl_lahir, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd')
+        tgl_gabung: format(new Date(values.tgl_gabung), 'yyyy-MM-dd'),
+        tgl_lahir: format(new Date(values.tgl_lahir), 'yyyy-MM-dd')
     };
 
     const formData = new FormData();

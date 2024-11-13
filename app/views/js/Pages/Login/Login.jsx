@@ -19,7 +19,7 @@ const Login = () => {
     
     const handleLogin = async (e) => {
         e.preventDefault();
-        router.post('/', values)
+        router.post('/', values);
     }
 
     return (
