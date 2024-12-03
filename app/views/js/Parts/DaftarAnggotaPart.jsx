@@ -7,8 +7,10 @@ const DaftarAnggotaPart = ({onSelect}) => {
     const [anggota, setAnggota] = useState([]);
     const [pagination, setPagination] = useState([]);
     const [search, setSearch] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchAnggota = async (page = 1, searchQuery = '') => {
+      setIsLoading(true);
         try{
             const response = await apiAnggota(page, searchQuery);
             setAnggota(response.anggota);
@@ -17,6 +19,7 @@ const DaftarAnggotaPart = ({onSelect}) => {
         }catch(error){
             console.log(error);
         }
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -88,18 +91,54 @@ const DaftarAnggotaPart = ({onSelect}) => {
                 </div>
             </div>
             <table className="text-sm text-left text-gray-500 w-full">
-                <Tableheader 
-                    checkAll={isCheckAll}
-                    isOnChange={handleCheckAll}
+    <thead className="border-b text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+            <th className="w-10 text-center">No</th>
+            <th className="w-8 text-center">
+                <input
+                    checked={isCheckAll}
+                    onChange={handleCheckAll}
+                    id="checkbox-all"
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <TableBody 
-                    data={anggota}
-                    current_page={currentPage}
-                    per_page={perPage}
-                    onChange={handleChecked}
-                    isCheckedChild={isCheck}
-                />
-            </table>
+            </th>
+            <th className="px-4 py-3">NIK</th>
+            <th className="px-4 py-3">Nama Anggota</th>
+            <th className="px-4 py-3">Alamat</th>
+            <th className="px-4 py-3">Tanggal Anggota</th>
+            <th className="px-4 py-3">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {isLoading ? (
+            <tr>
+                <td colSpan="7" className="text-center">Loading...</td>
+            </tr>
+        ) : (
+            anggota.map((dt, index) => (
+                <tr key={dt.id} className="border-b">
+                    <td className="text-center">{((currentPage - 1) * perPage) + index + 1}</td>
+                    <td className="text-center">
+                        <input
+                            id={dt.id.toString()}
+                            type="checkbox"
+                            value={dt.id}
+                            onChange={handleChecked}
+                            checked={isCheck.includes(dt.id)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                    </td>
+                    <td className="px-4 py-3">{dt.nik}</td>
+                    <td className="px-4 py-3">{dt.nama}</td>
+                    <td className="px-4 py-3">{dt.alamat}</td>
+                    <td className="px-4 py-3">{dt.tgl_gabung}</td>
+                    <td className="px-4 py-3">{dt.status_anggota}</td>
+                </tr>
+            ))
+        )}
+    </tbody>
+</table>
             <div className="mt-4 flex items-center justify-between">
                 <span className="text-slate-500">Page {currentPage} From {totalPage}</span>
                 <Pagination
@@ -142,36 +181,3 @@ const Tableheader = ({ checkAll, isOnChange }) => {
   );
 };
 
-
-const TableBody = ({ data, current_page, per_page, onChange, isCheckedChild }) => {
-  return (
-    <>
-      <Suspense fallback={<SkeletonLoading col="3" row="5" />}>
-        <tbody>
-          {data.map((dt, index) => (
-            <tr key={dt.id} className="border-b">
-              <td className="text-center">
-                {((current_page - 1) * per_page) + index + 1}
-              </td>
-              <td className="text-center">
-                <input
-                  id={dt.id.toString()}
-                  type="checkbox"
-                  value={dt.id}
-                  onChange={(e) => onChange(e)}
-                  checked={isCheckedChild.includes(dt.id)}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-              </td>
-              <td className="px-4 py-3">{dt.nik}</td>
-              <td className="px-4 py-3">{dt.nama}</td>
-              <td className="px-4 py-3">{dt.alamat}</td>
-              <td className="px-4 py-3">{dt.tgl_gabung}</td>
-              <td className="px-4 py-3">{dt.status_anggota}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Suspense>
-    </>
-  );
-};

@@ -1,16 +1,27 @@
 import Layout from '@layout/Layout.jsx';
 import { InputSimple, ButtonSimple, LabelSimple, TextareaSimple, SelectSimple, SimpleErrorText, RadioSimple, InputDate, InputCurrency} from '@components/index.jsx';
-import { BiTrashAlt } from "react-icons/bi";
-import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 const ModalSimple = lazy(() => import('@components/ModalSimple.jsx'))
+
+import currency from '@utils/formatCurrency.js'
 
 import DaftarAnggotaPart from '@parts/DaftarAnggotaPart.jsx'
 import {apiGetAnggota} from '@services/AnggotaServices'
-import currency from '@utils/formatCurrency.js'
-import {submitSimpanan} from '@services/SimpananServices.js'
 
-const AddSimpanan = () => {
+const AddPinjaman = () => {
+    
+    const [activeModal, setActiveModal] = useState(false);
+    const openModal = () => setActiveModal(true);
+    const closeModal = () => setActiveModal(false);
+    const handleAccept = (e) => {
+        closeModal();
+    };
+
+    const handleDecline = () => {
+        closeModal();
+    };
+
     const { errors } = usePage().props;
     const [values, setValues] = useState({
         tanggal_transaksi: new Date(),
@@ -18,11 +29,7 @@ const AddSimpanan = () => {
         harga_formateed: ''
     });
 
-    const [activeModal, setActiveModal] = useState(false);
-    const openModal = () => setActiveModal(true);
-    const closeModal = () => setActiveModal(false);
-
-    const handleInput = (e) => {
+    const handleInput  = (e) => {
         const key = e.target.name;
         const value = e.target.value;
         if(key === 'harga_formateed'){
@@ -38,17 +45,7 @@ const AddSimpanan = () => {
             [key]: value
             }))    
         }
-        
     }
-
-    const handleAccept = (e) => {
-        closeModal();
-    };
-
-    const handleDecline = () => {
-        closeModal();
-    };
-
 
     const handleSelectAnggota = async (id) => {
         try{
@@ -64,36 +61,7 @@ const AddSimpanan = () => {
         closeModal();
     }
 
-    const [pinjamanType, setPinjamanType] = useState([]);
-    const [selectPinjamanType, setSelectPinjamanType] = useState('');
-
-    const selectPinjamanData = [
-      {id: 'wajib', nama: 'Wajib'},
-      {id: 'pokok', nama: 'Pokok'},
-    ];
-
-    useEffect(() => {
-      setPinjamanType(selectPinjamanData)
-    }, [])
-
-    const handleSelectPinjamanType = (e) => {
-        const fakeEvent = {
-            target: {
-                name: e.target.name,
-                value: e.target.value
-            }
-        }
-        handleInput(fakeEvent);
-      setSelectPinjamanType(e.target.value)
-    }
-
-    const simpananAnggota = (e) => {
-        e.preventDefault()
-        console.log(values)
-        submitSimpanan(values)
-    }
-
-    return (
+     return (
         <>
             <Suspense fallback={<div>Loading...</div>}>
                 {activeModal && (
@@ -106,9 +74,9 @@ const AddSimpanan = () => {
                         />
                 )}
             </Suspense>
-            <Head title="Tambah Simpanan" />
-            <div className="m-2 border boder-gray-200 rounded py-4 px-6">
-                <form onSubmit={simpananAnggota}>
+           <Head title="Tambah Simpanan" />
+            <div className="m-2 border boder-gray-200 rounded p-4">
+                <form>
                     <div className="flex flex-row gap-4">
                         <div className="w-1/2">
                             <div className="flex flex-row gap-x-1 mb-4">
@@ -134,27 +102,13 @@ const AddSimpanan = () => {
                             </div>
                             <div className="flex flex-col w-5/6 mb-4">
                                 <LabelSimple  
-                                htmlFor="tgl_lahir" label ="Jenis Simpanan" />
-                                <SelectSimple 
-                                    jenisSelect="simple"
-                                    name="jenis_simpanan"
-                                    value={selectPinjamanType}
-                                    setValue={setSelectPinjamanType}
-                                    onChange={handleSelectPinjamanType}
-                                    data={pinjamanType}
-                                    textAtas="Pilih Tipe"
-                                  />
-                                {errors.jenis_simpanan && <SimpleErrorText dataError={errors.jenis_simpanan} />}
-                            </div>
-                            <div className="flex flex-col w-5/6 mb-4">
-                                <LabelSimple  
                                 htmlFor="tgl_lahir" label ="Tanggal Transaksi" />
                                 <InputDate value={values.tanggal_transaksi} name="tanggal_transaksi" onChange={handleInput} width="w-full" />
                                 {errors.tanggal_transaksi && <SimpleErrorText dataError={errors.tanggal_transaksi} />}
                             </div>
                             <div className="flex flex-col w-5/6 mb-4">
                                 <LabelSimple  
-                                htmlFor="tgl_lahir" label ="Jumlah Simpanan" />
+                                htmlFor="tgl_lahir" label ="Jumlah Pinjaman" />
                                 <InputSimple 
                                     value={values.harga_formateed}   
                                     name="harga_formateed" 
@@ -162,40 +116,17 @@ const AddSimpanan = () => {
                                     width="w-full" />
                                 {errors.harga && <SimpleErrorText dataError={errors.harga} />}
                             </div>
-                            <div className="flex flex-col w-5/6 mb-4">
-                                <LabelSimple  
-                                htmlFor="tgl_lahir" label ="Keterangan" />
-                                <TextareaSimple 
-                                value={values.ket} 
-                                placeholder="keterangan"
-                                onChange={handleInput}
-                                name="ket" width="w-full" />
-                               
-                            </div>
                         </div>
                     </div>
-                    <InputSimple width="w-full" type="hidden" placeholder="NIK Anggota" value={values.refid_anggota} onChange={handleInput} name="refid_anggota" isError={errors.id} disabled /> 
-                     <InputSimple width="w-full" type="hidden" placeholder="NIK Anggota" value={values.harga} onChange={handleInput} name="harga" isError={errors.id} disabled /> 
-                     <ButtonSimple 
-                      type="button" 
-                      text="Batal" 
-                      classCustom="px-12 bg-gradient-to-r from-red-600 to-red-800 text-white" 
-                        />
-                    <ButtonSimple 
-                          type="submit" 
-                          text="Simpan" 
-                          classCustom="px-12 ml-4 bg-gradient-to-r from-gray-900 to-black text-white" 
-                            />
                 </form>
             </div>
         </>
     )
 }
 
-AddSimpanan.layout = (page) => <Layout children={page} title="AddSimpanan" />;
+AddPinjaman.layout = (page) => <Layout children={page} title="AddPinjaman" />;
 
-export default AddSimpanan;
-
+export default AddPinjaman;
 
 const ModalAnggota = (props) => {
     return (

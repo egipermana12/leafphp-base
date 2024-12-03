@@ -12,5 +12,7 @@ import RadioSimple from './RadioSimple.jsx';
 import InputDate from './InputDate.jsx';
 import SimpleAlert from './SimpleAlert.jsx';
 import InputCurrency from './InputCurrency.jsx';
+import LoadingSimple from './LoadingSimple.jsx';
+import BadgeSimple from './BadgeSimple.jsx';
 
-export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText, LabelSimple, TextareaSimple, SelectSimple, RadioSimple, InputDate, SimpleAlert, InputCurrency}
+export {InputSimple, ButtonSimple, TableSimple, Pagination, SkeletonLoading, ModalSimple, SimpleErrorText, LabelSimple, TextareaSimple, SelectSimple, RadioSimple, InputDate, SimpleAlert, InputCurrency, LoadingSimple, BadgeSimple}

@@ -58,17 +58,22 @@ app()->setNamespace('\App\Controllers');
 */
 // require __DIR__ . '/custom-route.php';
 
+app()->config('session.instance', true);
+app()->config('db.instance',true);
+
 auth()->config([
   'GUARD_HOME' => '/dashboard',
   'GUARD_LOGIN' => '/',
 ]);
-
+app()->config('session.instance', true);
 app()->registerMiddleware('auth_access', function() {
   $middleware = new AuthMiddleware();
   return $middleware->handle();
 });
 
-app()->use(HandleInertiaRequests::class);
+// app()->use(HandleInertiaRequests::class);
+
+
 
 app()->get('/', 'LoginController@index');
 app()->post('/', 'LoginController@login');
@@ -110,6 +115,12 @@ app()->group('/simpanan', ['middleware' => 'auth_access', function() {
     app()->post('/', 'SimpananController@store');
     app()->get('/edit/(\d+)', 'SimpananController@edit');
     app()->patch('/', 'SimpananController@update');
+}]);
+
+app()->group('/pinjaman', ['middleware' => 'auth_access', function() {
+    app()->get('/', 'PinjamanController@index');
+    app()->get('/create', 'PinjamanController@create');
+    app()->get('/apiPinjaman', 'PinjamanController@daftarPinjamanapi');
 }]);
 
 app()->group('/wilayah', ['middleware' => 'auth_access', function() {

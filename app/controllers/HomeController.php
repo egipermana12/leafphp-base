@@ -9,13 +9,6 @@ use App\Models\Module;
 class HomeController extends \Leaf\Controller
 {
 
-  public $flash;
-
-  public function __construct()
-  {
-    $this->flash = null;
-  }
-
   public function index()
   {
     $data = Home::orderBy('user')->take(10)->get();
@@ -24,9 +17,10 @@ class HomeController extends \Leaf\Controller
 
   public function dashboard()
   {
+    $flash = flash()->set('message from dashboard');
     return inertia('Dashboard/Dashboard', [
       'user' => assets('img/coba.jpeg'),
-      'flash' => $this->flash
+      'session' => session()->body()
     ]);
   }
 

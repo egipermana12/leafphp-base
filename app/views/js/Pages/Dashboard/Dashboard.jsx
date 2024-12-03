@@ -2,8 +2,8 @@ import Layout from '@layout/Layout.jsx'
 import { Head, usePage } from '@inertiajs/react'
 
 const Dashobard = () => {
-  const { user } = usePage().props;
-  console.log(user)
+  const { session, user } = usePage().props;
+  console.log(session.leaf)
   return (
     <>
       <Head title="Dashobard" />
