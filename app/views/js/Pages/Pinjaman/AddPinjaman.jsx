@@ -26,7 +26,8 @@ const AddPinjaman = () => {
     const [values, setValues] = useState({
         tanggal_transaksi: new Date(),
         harga: '',
-        harga_formateed: ''
+        harga_formateed: '',
+        status: 'disetujui'
     });
 
     const handleInput  = (e) => {
@@ -61,6 +62,36 @@ const AddPinjaman = () => {
         closeModal();
     }
 
+    const [tenorType, setTenorType] = useState([]);
+    const [selectTenorType, setSelectTenorType] = useState('');
+
+    useEffect(() => {
+        setTenorType([
+            {id: 1, nama: '1 Bulan'},
+            {id: 3, nama: '3 Bulan'},
+            {id: 6, nama: '6 Bulan'},
+            {id: 9, nama: '9 Bulan'},
+            {id: 12, nama: '12 Bulan'},
+        ]);
+    },[])
+
+    const handleSelectTenorType = (e) => {
+        const fakeEvent = {
+            target: {
+                name: e.target.name,
+                value: e.target.value
+            }
+        }
+        handleInput(fakeEvent);
+        setSelectTenorType(e.target.value);
+    }
+
+    const handleSubmit = (e) =>
+    {
+        e.preventDefault();
+        alert('hello')
+    }
+
      return (
         <>
             <Suspense fallback={<div>Loading...</div>}>
@@ -76,7 +107,7 @@ const AddPinjaman = () => {
             </Suspense>
            <Head title="Tambah Simpanan" />
             <div className="m-2 border boder-gray-200 rounded p-4">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="flex flex-row gap-4">
                         <div className="w-1/2">
                             <div className="flex flex-row gap-x-1 mb-4">
@@ -116,8 +147,41 @@ const AddPinjaman = () => {
                                     width="w-full" />
                                 {errors.harga && <SimpleErrorText dataError={errors.harga} />}
                             </div>
+                            <div className="flex flex-col w-5/6 mb-4">
+                                <LabelSimple  
+                                htmlFor="Teno" label ="Ternor Pinjaman" />
+                                <SelectSimple 
+                                    jenisSelect="simple"
+                                    name="tenor"
+                                    value={selectTenorType}
+                                    setValue={setSelectTenorType}
+                                    onChange={handleSelectTenorType}
+                                    data={tenorType}
+                                    textAtas="Pilih Tenor"
+                                  />
+                                {errors.tenor && <SimpleErrorText dataError={errors.tenor} />}
+                            </div>
+                             <div className="flex flex-col w-5/6 mb-4">
+                                <LabelSimple  
+                                htmlFor="status" label ="Status Pinjaman" />
+                                <div className="flex flex-row gap-x-2">
+                                    <RadioSimple id="status_disetujui" value="disetujui" onChange={handleInput} name="status" label="Disetujui" checked={values.status === 'disetujui'} />
+                                    <RadioSimple id="status_ditolak" value="ditolak" onChange={handleInput} name="status" checked={values.status === 'ditolak'} label="Ditolak" />
+                                </div>
+                                {errors.status && <SimpleErrorText dataError={errors.status} />}
+                             </div>
                         </div>
                     </div>
+                    <ButtonSimple 
+                      type="button" 
+                      text="Batal" 
+                      classCustom="px-12 bg-gradient-to-r from-red-600 to-red-800 text-white" 
+                        />
+                    <ButtonSimple 
+                          type="submit" 
+                          text="Simpan" 
+                          classCustom="px-12 ml-4 bg-gradient-to-r from-gray-900 to-black text-white" 
+                            />
                 </form>
             </div>
         </>
